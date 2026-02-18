@@ -565,8 +565,8 @@ func TestGetSprite_ExactStrings(t *testing.T) {
 	if sprite[1] != expected1 {
 		t.Errorf("Line 1: expected %q, got %q", expected1, sprite[1])
 	}
-	// Line 2: "  ▘▘▝▝   "
-	expected2 := "  \u2598\u2598\u259D\u259D   "
+	// Line 2: "   ▘▘ ▝▝ "
+	expected2 := "   \u2598\u2598 \u259D\u259D "
 	if sprite[2] != expected2 {
 		t.Errorf("Line 2: expected %q, got %q", expected2, sprite[2])
 	}
