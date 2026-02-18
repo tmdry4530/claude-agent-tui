@@ -21,16 +21,23 @@ OMC Agent TUI의 시각적 아이덴티티를 통일하고, 에이전트 상태�
 
 ## 4) 에이전트 역할별 스타일
 
-| 역할 | 기본 색상(예시) | 배지 |
-|---|---|---|
-| Planner | `#7AA2F7` | `🧭` |
-| Coder | `#9ECE6A` | `🛠` |
-| Reviewer | `#BB9AF7` | `🔍` |
-| Guard | `#F7768E` | `🛡` |
-| Tester | `#E0AF68` | `🧪` |
-| Writer | `#73DACA` | `✍️` |
+| 역할 | 기본 색상 | 배지 | ASCII fallback |
+|---|---|---|---|
+| Planner | `#7AA2F7` | `🧭` | `[P]` |
+| Executor | `#9ECE6A` | `🛠` | `[X]` |
+| Reviewer | `#BB9AF7` | `🔍` | `[R]` |
+| Guard | `#F7768E` | `🛡` | `[G]` |
+| Tester | `#E0AF68` | `🧪` | `[T]` |
+| Writer | `#73DACA` | `✍️` | `[W]` |
+| Explorer | `#58A6FF` | `🔎` | `[E]` |
+| Architect | `#FFA657` | `📐` | `[A]` |
+| Debugger | `#FF7B72` | `🐛` | `[D]` |
+| Verifier | `#56D364` | `✅` | `[V]` |
+| Designer | `#D2A8FF` | `🎨` | `[S]` |
+| Custom | `#8A93A5` | `❓` | `[?]` |
 
 > 동일 역할의 다중 인스턴스는 톤 변형(밝기 ±10~15%)으로 구분.
+> event-schema.md 섹션 11 Role 매핑 테이블 참조.
 
 ---
 
@@ -38,11 +45,13 @@ OMC Agent TUI의 시각적 아이덴티티를 통일하고, 에이전트 상태�
 
 | 상태 | 시각 표현 | 접근성 대체 |
 |---|---|---|
-| RUNNING | 밝은 색 + 약한 pulse | `▶️` |
+| RUNNING | 밝은 색 + 약한 pulse | `▶` |
 | WAITING | 저채도/밝기 감소 | `…` |
-| BLOCKED | 노란 외곽선 강조 | `!` |
-| ERROR | 빨간 외곽선 + 짧은 shake | `✖️` |
-| DONE | 체크 뱃지 표시 | `✓` |
+| BLOCKED | 노란 외곽선 강조 (`#E3B341`) | `!` |
+| ERROR | 빨간 외곽선 + 짧은 shake (`#FF7B72`) | `✖` |
+| DONE | 체크 뱃지 표시 (`#56D364`) | `✓` |
+| FAILED | 빨간 외곽선 + X 뱃지, dim 처리 (`#FF7B72`) | `X` |
+| CANCELLED | 회색 외곽선 + `-` 뱃지 (`#6E7681`) | `-` |
 | IDLE | 기본색, 모션 없음 | `•` |
 
 ---
@@ -65,10 +74,9 @@ OMC Agent TUI의 시각적 아이덴티티를 통일하고, 에이전트 상태�
 - TrueColor 지원 감지 실패 시 256-color 팔레트로 자동 강등
 - 256-color 미지원 시 monochrome + 상태 아이콘 모드로 강등
 - 폰트/이모지 미지원 시 ASCII fallback:
-  - Planner `[P]`
-  - Coder `[C]`
-  - Reviewer `[R]`
-  - Guard `[G]`
+  - Planner `[P]`, Executor `[X]`, Reviewer `[R]`, Guard `[G]`
+  - Tester `[T]`, Writer `[W]`, Explorer `[E]`, Architect `[A]`
+  - Debugger `[D]`, Verifier `[V]`, Designer `[S]`, Custom `[?]`
 
 ---
 

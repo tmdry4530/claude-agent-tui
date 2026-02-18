@@ -1,0 +1,35 @@
+# Binaries
+bin/
+omc-tui
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test binary
+*.test
+
+# Go build cache
+*.out
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# OMC state (ephemeral)
+.omc/state/
+.omc/prompts/
+.omc/logs/
+.omc/notepad.md
+.omc/project-memory.json
+
+# Environment
+.env
+.env.local

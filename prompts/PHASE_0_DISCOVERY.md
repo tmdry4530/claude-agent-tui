@@ -42,3 +42,4 @@
 3) Open Questions
 4) Assumptions
 5) Next Actions(최대 5개)
+

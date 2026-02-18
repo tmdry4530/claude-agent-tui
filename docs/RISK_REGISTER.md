@@ -9,6 +9,9 @@
 | R-05 | 모드별 상태 해석 불일치 | 중간 | 중간 | mode별 규칙 문서화, DECISIONS 고정 | Open |
 | R-06 | replay 재현 불일치 | 중간 | 중간 | canonical schema + deterministic clock | Open |
 | R-07 | 팀 내 용어 불일치 | 낮음 | 중간 | glossary/ADR(DECISIONS.md) 운영 | Open |
+| R-08 | 장시간 세션 메모리 누적 | 높음 | 중간 | Store GC 정책, ring buffer 크기 제한, RSS 모니터링 | Open |
+| R-09 | 키바인딩 모드 간 충돌 | 낮음 | 중간 | 포커스 기반 우선순위 규칙 확정 | Open |
+| R-10 | Role 매핑 확장성 | 낮음 | 중간 | v0.2에서 role 확장 검토 트리거 정의 | Open |
 
 ## 운영 규칙
 - 새 리스크 발견 시 즉시 추가

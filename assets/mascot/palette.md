@@ -11,16 +11,22 @@
 ## 2) Role Colors
 
 - Planner: `#7AA2F7`
-- Coder: `#9ECE6A`
+- Executor: `#9ECE6A`
 - Reviewer: `#BB9AF7`
 - Guard: `#F7768E`
 - Tester: `#E0AF68`
 - Writer: `#73DACA`
+- Explorer: `#58A6FF`
+- Architect: `#FFA657`
+- Debugger: `#FF7B72`
+- Verifier: `#56D364`
+- Designer: `#D2A8FF`
+- Custom: `#8A93A5`
 
 ### Role Variants (multi-agent)
-- Coder-A: `#9ECE6A`
-- Coder-B: `#8BCF7A`
-- Coder-C: `#7FD18A`
+- Executor-A: `#9ECE6A`
+- Executor-B: `#8BCF7A`
+- Executor-C: `#7FD18A`
 
 ---
 
@@ -31,6 +37,8 @@
 - BLOCKED: `#E3B341`
 - ERROR: `#FF7B72`
 - DONE: `#56D364`
+- FAILED: `#FF7B72`
+- CANCELLED: `#6E7681`
 - IDLE: `#6E7681`
 
 ---
@@ -48,17 +56,25 @@
 ## 5) Terminal Fallback (256-color)
 
 - Planner: `111`
-- Coder: `114`
+- Executor: `114`
 - Reviewer: `183`
 - Guard: `203`
 - Tester: `179`
 - Writer: `80`
+- Explorer: `75`
+- Architect: `214`
+- Debugger: `203`
+- Verifier: `77`
+- Designer: `183`
+- Custom: `245`
 
 - RUNNING: `120`
 - WAITING: `245`
 - BLOCKED: `214`
 - ERROR: `203`
 - DONE: `77`
+- FAILED: `203`
+- CANCELLED: `242`
 - IDLE: `242`
 
 ---
@@ -66,11 +82,17 @@
 ## 6) Accessibility Palette (Color-blind Friendly)
 
 - Planner: `#4C78A8`
-- Coder: `#59A14F`
+- Executor: `#59A14F`
 - Reviewer: `#B07AA1`
 - Guard: `#E15759`
 - Tester: `#F28E2B`
 - Writer: `#76B7B2`
+- Explorer: `#4E79A7`
+- Architect: `#F28E2B`
+- Debugger: `#E15759`
+- Verifier: `#59A14F`
+- Designer: `#B07AA1`
+- Custom: `#7F7F7F`
 
 상태:
 - RUNNING: `#2E8B57`
@@ -78,6 +100,8 @@
 - BLOCKED: `#C17D11`
 - ERROR: `#B22222`
 - DONE: `#228B22`
+- FAILED: `#B22222`
+- CANCELLED: `#696969`
 - IDLE: `#696969`
 
 ---
