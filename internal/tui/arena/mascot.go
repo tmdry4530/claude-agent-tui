@@ -10,7 +10,7 @@ const SpriteWidth = 9
 var SpriteLines = [3]string{
 	" \u2590\u259B\u2588\u2588\u2588\u259C\u258C ",       // " ▐▛███▜▌ "
 	"\u259D\u259C\u2588\u2588\u2588\u2588\u2588\u259B\u2598", // "▝▜█████▛▘"
-	"   \u2598\u2598 \u259D\u259D ",                          // "   ▘▘ ▝▝ "
+	" \u2598\u2598   \u259D\u259D ",                          // " ▘▘   ▝▝ "
 }
 
 // ASCIIFallback is the 3-line ASCII fallback when block chars don't render.
