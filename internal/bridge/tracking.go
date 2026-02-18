@@ -95,7 +95,11 @@ func agentToEvents(a TrackedAgent) ([]schema.CanonicalEvent, error) {
 		state, eventType := mapStatus(a.Status)
 		var payload json.RawMessage
 		if a.DurationMs > 0 {
-			payload, _ = json.Marshal(map[string]int64{"duration_ms": a.DurationMs})
+			p, err := json.Marshal(map[string]int64{"duration_ms": a.DurationMs})
+			if err != nil {
+				return nil, fmt.Errorf("marshal duration payload: %w", err)
+			}
+			payload = p
 		}
 
 		terminal := schema.CanonicalEvent{

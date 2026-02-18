@@ -1,8 +1,21 @@
 # PROGRESS
 
 ## 현재 상태
-- Phase: 2 (Execution) → v0.2.0 Plugin UX 완성
-- 테스트: 182 tests (12 파일, 12 패키지) PASS, BUILD OK, RACE 0
+- Phase: 3 (Release) → v0.2.0 마켓플레이스 배포 준비 완료
+- 테스트: 182 tests (12 파일, 12 패키지) PASS, BUILD OK, VET OK, RACE 0
+
+## 세션 9 완료 (P0 보안 + P1 배포 인프라)
+- [x] P0: hook SESSION_ID path traversal 수정 (basename + allowlist regex)
+- [x] P0: hook 파일 권한 수정 (umask 077)
+- [x] P0: hook JSON 입력 검증
+- [x] P0: bridge silent error swallow 수정 (tracking.go, emitter.go)
+- [x] P0: emitter 파일 권한 0644 → 0640
+- [x] P1: GitHub Actions CI (.github/workflows/ci.yml)
+- [x] P1: GoReleaser 크로스 플랫폼 빌드 (.goreleaser.yml)
+- [x] P1: MIT LICENSE 파일
+- [x] P1: README ASCII 데모 스크린샷
+- [x] P1: --version 플래그 + goreleaser ldflags 연동
+- [x] 전체 테스트 182 PASS, BUILD OK, VET OK, RACE 0
 
 ## 세션 8 완료 (Plugin UX)
 - [x] 슬래시 명령 5종: install-bridge, monitor, replay, doctor, stop

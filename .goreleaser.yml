@@ -1,0 +1,53 @@
+version: 2
+
+project_name: omc-tui
+
+before:
+  hooks:
+    - go mod tidy
+    - go test ./... -race -count=1
+
+builds:
+  - id: omc-tui
+    main: ./cmd/omc-tui
+    binary: omc-tui
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.ShortCommit}}
+
+archives:
+  - id: default
+    formats:
+      - tar.gz
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}
+
+checksum:
+  name_template: 'checksums.txt'
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^chore:'
+
+release:
+  github:
+    owner: chamdom
+    name: omc-agent-tui
+  draft: false
+  prerelease: auto

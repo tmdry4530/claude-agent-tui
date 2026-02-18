@@ -19,12 +19,24 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+// Set by goreleaser ldflags.
+var (
+	version = "dev"
+	commit  = "none"
+)
+
 func main() {
 	watchPath := flag.String("watch", "", "Directory to watch for JSONL event files")
 	replayFile := flag.String("replay", "", "JSONL file to replay")
 	convertFile := flag.String("convert", "", "Convert subagent-tracking.json to JSONL (output to stdout or -o)")
 	convertOut := flag.String("o", "", "Output path for --convert (default: stdout)")
+	showVersion := flag.Bool("version", false, "Print version and exit")
 	flag.Parse()
+
+	if *showVersion {
+		fmt.Printf("omc-tui %s (%s)\n", version, commit)
+		return
+	}
 
 	// Convert mode: non-TUI, converts tracking file and exits
 	if *convertFile != "" {

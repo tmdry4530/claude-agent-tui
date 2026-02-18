@@ -4,6 +4,21 @@ Real-time TUI dashboard for monitoring AI agent orchestration events.
 
 Built with Go and [Bubbletea](https://github.com/charmbracelet/bubbletea).
 
+## Demo
+
+```
+╭────────────────────────╮  ╭────────────────────────╮  ╭────────────────────────╮
+│       ▐▛███▜▌          │  │       ▐▛███▜▌          │  │       ▐▛███▜▌          │
+│      ▝▜█████▛▘         │  │      ▝▜█████▛▘         │  │      ▝▜█████▛▘         │
+│       ▘▘   ▝▝          │  │       ▘▘   ▝▝          │  │       ▘▘   ▝▝          │
+│  executor ●            │  │  planner ●             │  │  reviewer ○            │
+│  agent-exec-1          │  │  agent-plan-1          │  │  agent-rev-1           │
+│  running               │  │  running               │  │  waiting               │
+│  Recent activity       │  │  Recent activity       │  │  Recent activity       │
+│  task spawned          │  │  planning phase        │  │  awaiting review       │
+╰────────────────────────╯  ╰────────────────────────╯  ╰────────────────────────╯
+```
+
 ## Features
 
 - 5-panel layout: Arena (agent cards), Timeline (event stream), Graph (task tree), Inspector (event details), Footer (metrics)

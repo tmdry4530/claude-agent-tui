@@ -25,7 +25,7 @@ func EmitEvent(eventDir, sessionID string, event schema.CanonicalEvent) error {
 	}
 	line = append(line, '\n')
 
-	f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0640)
 	if err != nil {
 		return fmt.Errorf("open event file: %w", err)
 	}
@@ -114,7 +114,10 @@ func NewErrorEvent(agentID, agentType, parentMode, errMsg string) schema.Canonic
 	mode := mapParentMode(parentMode)
 	var payload json.RawMessage
 	if errMsg != "" {
-		payload, _ = json.Marshal(map[string]string{"error": errMsg})
+		p, err := json.Marshal(map[string]string{"error": errMsg})
+		if err == nil {
+			payload = p
+		}
 	}
 	return schema.CanonicalEvent{
 		Ts:       time.Now(),
