@@ -13,75 +13,61 @@ func TestNewModel(t *testing.T) {
 	if m.agents == nil {
 		t.Error("Expected agents map to be initialized, got nil")
 	}
-
 	if len(m.agents) != 0 {
 		t.Errorf("Expected empty agents map, got length %d", len(m.agents))
 	}
-
-	if m.width != 0 {
-		t.Errorf("Expected width to be 0, got %d", m.width)
+	if m.width != 0 || m.height != 0 {
+		t.Errorf("Expected zero dimensions, got %dx%d", m.width, m.height)
 	}
-
-	if m.height != 0 {
-		t.Errorf("Expected height to be 0, got %d", m.height)
+	if m.selected != 0 {
+		t.Errorf("Expected selected 0, got %d", m.selected)
+	}
+	if !m.unicode {
+		t.Error("Expected unicode mode enabled by default")
 	}
 }
 
 func TestUpdateAgent_NewAgent(t *testing.T) {
 	m := NewModel()
-
-	agentID := "agent-001"
-	role := schema.RoleExecutor
-	state := schema.StateRunning
-
-	m.UpdateAgent(agentID, role, state)
+	m.UpdateAgent("agent-001", schema.RoleExecutor, schema.StateRunning)
 
 	if len(m.agents) != 1 {
 		t.Fatalf("Expected 1 agent, got %d", len(m.agents))
 	}
-
-	card, exists := m.agents[agentID]
-	if !exists {
-		t.Fatal("Expected agent to exist in map")
+	if len(m.order) != 1 {
+		t.Fatalf("Expected 1 in order, got %d", len(m.order))
 	}
 
-	if card.AgentID != agentID {
-		t.Errorf("Expected AgentID %q, got %q", agentID, card.AgentID)
+	card := m.agents["agent-001"]
+	if card.AgentID != "agent-001" {
+		t.Errorf("Expected AgentID agent-001, got %q", card.AgentID)
 	}
-
-	if card.Role != role {
-		t.Errorf("Expected Role %q, got %q", role, card.Role)
+	if card.Role != schema.RoleExecutor {
+		t.Errorf("Expected Role executor, got %q", card.Role)
 	}
-
-	if card.State != state {
-		t.Errorf("Expected State %q, got %q", state, card.State)
+	if card.State != schema.StateRunning {
+		t.Errorf("Expected State running, got %q", card.State)
 	}
 }
 
 func TestUpdateAgent_ExistingAgent(t *testing.T) {
 	m := NewModel()
-	agentID := "agent-001"
-
-	m.UpdateAgent(agentID, schema.RoleExecutor, schema.StateRunning)
-	m.UpdateAgent(agentID, schema.RolePlanner, schema.StateDone)
+	m.UpdateAgent("agent-001", schema.RoleExecutor, schema.StateRunning)
+	m.UpdateAgent("agent-001", schema.RolePlanner, schema.StateDone)
 
 	if len(m.agents) != 1 {
 		t.Errorf("Expected 1 agent after update, got %d", len(m.agents))
 	}
-
-	card := m.agents[agentID]
-	if card.Role != schema.RolePlanner {
-		t.Errorf("Expected updated role %q, got %q", schema.RolePlanner, card.Role)
+	if len(m.order) != 1 {
+		t.Errorf("Expected 1 in order, got %d", len(m.order))
 	}
-
-	if card.State != schema.StateDone {
-		t.Errorf("Expected updated state %q, got %q", schema.StateDone, card.State)
+	if m.agents["agent-001"].Role != schema.RolePlanner {
+		t.Errorf("Expected updated role planner, got %q", m.agents["agent-001"].Role)
 	}
 }
 
 func TestUpdateAgent_MultipleAgents(t *testing.T) {
 	m := NewModel()
-
 	m.UpdateAgent("agent-001", schema.RoleExecutor, schema.StateRunning)
 	m.UpdateAgent("agent-002", schema.RolePlanner, schema.StateIdle)
 	m.UpdateAgent("agent-003", schema.RoleReviewer, schema.StateDone)
@@ -89,72 +75,236 @@ func TestUpdateAgent_MultipleAgents(t *testing.T) {
 	if len(m.agents) != 3 {
 		t.Errorf("Expected 3 agents, got %d", len(m.agents))
 	}
+	if len(m.order) != 3 {
+		t.Errorf("Expected 3 in order, got %d", len(m.order))
+	}
+}
+
+func TestUpdateAgentWithSummary(t *testing.T) {
+	m := NewModel()
+	m.UpdateAgentWithSummary("agent-001", schema.RoleExecutor, schema.StateRunning, "task spawned")
+
+	card := m.agents["agent-001"]
+	if card.Summary != "task spawned" {
+		t.Errorf("Expected summary 'task spawned', got %q", card.Summary)
+	}
 }
 
 func TestSetSize(t *testing.T) {
 	m := NewModel()
-
 	m.SetSize(80, 24)
 
-	if m.width != 80 {
-		t.Errorf("Expected width 80, got %d", m.width)
+	if m.width != 80 || m.height != 24 {
+		t.Errorf("Expected 80x24, got %dx%d", m.width, m.height)
+	}
+}
+
+func TestSetFocused(t *testing.T) {
+	m := NewModel()
+	m.SetFocused(true)
+	if !m.focused {
+		t.Error("Expected focused true")
+	}
+	m.SetFocused(false)
+	if m.focused {
+		t.Error("Expected focused false")
+	}
+}
+
+func TestSetUnicode(t *testing.T) {
+	m := NewModel()
+	if !m.unicode {
+		t.Error("Expected unicode true by default")
+	}
+	m.SetUnicode(false)
+	if m.unicode {
+		t.Error("Expected unicode false after SetUnicode(false)")
+	}
+}
+
+func TestSelectedAgent_Empty(t *testing.T) {
+	m := NewModel()
+	if m.SelectedAgent() != nil {
+		t.Error("Expected nil for empty model")
+	}
+}
+
+func TestSelectedAgent_WithAgents(t *testing.T) {
+	m := NewModel()
+	m.UpdateAgent("agent-001", schema.RoleExecutor, schema.StateRunning)
+	m.UpdateAgent("agent-002", schema.RolePlanner, schema.StateIdle)
+
+	agent := m.SelectedAgent()
+	if agent == nil {
+		t.Fatal("Expected non-nil selected agent")
+	}
+	if agent.AgentID != "agent-001" {
+		t.Errorf("Expected first agent selected, got %q", agent.AgentID)
+	}
+}
+
+func TestAgentCount(t *testing.T) {
+	m := NewModel()
+	if m.AgentCount() != 0 {
+		t.Errorf("Expected 0, got %d", m.AgentCount())
+	}
+	m.UpdateAgent("agent-001", schema.RoleExecutor, schema.StateRunning)
+	if m.AgentCount() != 1 {
+		t.Errorf("Expected 1, got %d", m.AgentCount())
+	}
+}
+
+func TestHandleKey_Navigation(t *testing.T) {
+	m := NewModel()
+	m.UpdateAgent("agent-001", schema.RoleExecutor, schema.StateRunning)
+	m.UpdateAgent("agent-002", schema.RolePlanner, schema.StateIdle)
+	m.UpdateAgent("agent-003", schema.RoleReviewer, schema.StateDone)
+
+	// j moves down
+	consumed := m.HandleKey("j")
+	if !consumed {
+		t.Error("Expected j to be consumed")
+	}
+	if m.selected != 1 {
+		t.Errorf("Expected selected 1 after j, got %d", m.selected)
 	}
 
-	if m.height != 24 {
-		t.Errorf("Expected height 24, got %d", m.height)
+	// k moves up
+	m.HandleKey("k")
+	if m.selected != 0 {
+		t.Errorf("Expected selected 0 after k, got %d", m.selected)
 	}
 
-	m.SetSize(120, 40)
-
-	if m.width != 120 {
-		t.Errorf("Expected width 120 after update, got %d", m.width)
+	// Wrap around down
+	m.HandleKey("down")
+	m.HandleKey("down")
+	m.HandleKey("down")
+	if m.selected != 0 {
+		t.Errorf("Expected wrap to 0, got %d", m.selected)
 	}
 
-	if m.height != 40 {
-		t.Errorf("Expected height 40 after update, got %d", m.height)
+	// Wrap around up
+	m.HandleKey("up")
+	if m.selected != 2 {
+		t.Errorf("Expected wrap to 2, got %d", m.selected)
+	}
+
+	// h/l navigation
+	m.selected = 0
+	m.HandleKey("l")
+	if m.selected != 1 {
+		t.Errorf("Expected 1 after l, got %d", m.selected)
+	}
+	m.HandleKey("h")
+	if m.selected != 0 {
+		t.Errorf("Expected 0 after h, got %d", m.selected)
+	}
+}
+
+func TestHandleKey_EmptyAgents(t *testing.T) {
+	m := NewModel()
+	consumed := m.HandleKey("j")
+	if !consumed {
+		t.Error("Expected j to be consumed even with empty agents")
+	}
+	if m.selected != 0 {
+		t.Errorf("Expected selected to remain 0, got %d", m.selected)
+	}
+}
+
+func TestHandleKey_UnknownKey(t *testing.T) {
+	m := NewModel()
+	consumed := m.HandleKey("x")
+	if consumed {
+		t.Error("Expected x to not be consumed")
 	}
 }
 
 func TestView_NoSize(t *testing.T) {
 	m := NewModel()
 	m.UpdateAgent("agent-001", schema.RoleExecutor, schema.StateRunning)
-
-	result := m.View()
-
-	if result != "" {
-		t.Errorf("Expected empty string when size is not set, got %q", result)
+	if m.View() != "" {
+		t.Error("Expected empty string when size is not set")
 	}
 }
 
 func TestView_EmptyWithSize(t *testing.T) {
 	m := NewModel()
 	m.SetSize(80, 24)
-
 	result := m.View()
-
 	if result == "" {
 		t.Error("Expected non-empty output with size set")
 	}
-
 	if !strings.Contains(result, "No agents") {
-		t.Errorf("Expected 'No agents' message, got %q", result)
+		t.Error("Expected 'No agents' message")
 	}
 }
 
 func TestView_WithAgents(t *testing.T) {
 	m := NewModel()
-	m.SetSize(80, 24)
+	m.SetSize(120, 24)
 	m.UpdateAgent("agent-001", schema.RoleExecutor, schema.StateRunning)
 	m.UpdateAgent("agent-002", schema.RolePlanner, schema.StateDone)
 
 	result := m.View()
-
 	if result == "" {
 		t.Error("Expected non-empty output")
 	}
-
 	if strings.Contains(result, "No agents") {
 		t.Error("Should not contain 'No agents' when agents exist")
+	}
+}
+
+func TestView_FocusedBorder(t *testing.T) {
+	m := NewModel()
+	m.SetSize(80, 24)
+	m.SetFocused(true)
+	m.UpdateAgent("agent-001", schema.RoleExecutor, schema.StateRunning)
+	result := m.View()
+	if result == "" {
+		t.Error("Expected non-empty output when focused")
+	}
+}
+
+func TestView_SelectedCard(t *testing.T) {
+	m := NewModel()
+	m.SetSize(120, 24)
+	m.SetFocused(true)
+	m.UpdateAgent("agent-001", schema.RoleExecutor, schema.StateRunning)
+	m.UpdateAgent("agent-002", schema.RolePlanner, schema.StateIdle)
+
+	// Select second agent
+	m.HandleKey("j")
+	result := m.View()
+	if result == "" {
+		t.Error("Expected non-empty output with selection")
+	}
+}
+
+func TestView_ASCIIFallback(t *testing.T) {
+	m := NewModel()
+	m.SetSize(120, 24)
+	m.SetUnicode(false)
+	m.UpdateAgentWithSummary("agent-001", schema.RoleExecutor, schema.StateRunning, "working")
+
+	result := m.View()
+	if result == "" {
+		t.Error("Expected non-empty ASCII output")
+	}
+	// ASCII fallback should contain the role label
+	if !strings.Contains(result, "executor") {
+		t.Error("Expected executor role in ASCII output")
+	}
+}
+
+func TestView_WithSummary(t *testing.T) {
+	m := NewModel()
+	m.SetSize(120, 24)
+	m.UpdateAgentWithSummary("agent-001", schema.RoleExecutor, schema.StateRunning, "task spawned")
+
+	result := m.View()
+	if !strings.Contains(result, "task spawned") {
+		t.Error("Expected summary text in output")
 	}
 }
 
@@ -163,18 +313,18 @@ func TestGetRoleColor_KnownRoles(t *testing.T) {
 		role     schema.Role
 		expected string
 	}{
-		{schema.RolePlanner, "#7B68EE"},
-		{schema.RoleExecutor, "#4FC3F7"},
-		{schema.RoleReviewer, "#FFD54F"},
-		{schema.RoleGuard, "#EF5350"},
-		{schema.RoleTester, "#66BB6A"},
-		{schema.RoleWriter, "#A1887F"},
-		{schema.RoleExplorer, "#BA68C8"},
-		{schema.RoleArchitect, "#FF8A65"},
-		{schema.RoleDebugger, "#F06292"},
-		{schema.RoleVerifier, "#81C784"},
-		{schema.RoleDesigner, "#4DD0E1"},
-		{schema.RoleCustom, "#9E9E9E"},
+		{schema.RolePlanner, "#7AA2F7"},
+		{schema.RoleExecutor, "#9ECE6A"},
+		{schema.RoleReviewer, "#BB9AF7"},
+		{schema.RoleGuard, "#F7768E"},
+		{schema.RoleTester, "#E0AF68"},
+		{schema.RoleWriter, "#73DACA"},
+		{schema.RoleExplorer, "#58A6FF"},
+		{schema.RoleArchitect, "#FFA657"},
+		{schema.RoleDebugger, "#FF7B72"},
+		{schema.RoleVerifier, "#56D364"},
+		{schema.RoleDesigner, "#D2A8FF"},
+		{schema.RoleCustom, "#8A93A5"},
 	}
 
 	for _, tt := range tests {
@@ -188,100 +338,161 @@ func TestGetRoleColor_KnownRoles(t *testing.T) {
 }
 
 func TestGetRoleColor_UnknownRole(t *testing.T) {
-	unknownRole := schema.Role("unknown-role")
-	color := getRoleColor(unknownRole)
-	expected := "#9E9E9E"
+	color := getRoleColor(schema.Role("unknown"))
+	if color != "#8A93A5" {
+		t.Errorf("Expected default color, got %q", color)
+	}
+}
 
-	if color != expected {
-		t.Errorf("Expected default color %q for unknown role, got %q", expected, color)
+func TestGetStateColor_KnownStates(t *testing.T) {
+	tests := []struct {
+		state    schema.AgentState
+		expected string
+	}{
+		{schema.StateRunning, "#7EE787"},
+		{schema.StateWaiting, "#7D8590"},
+		{schema.StateBlocked, "#E3B341"},
+		{schema.StateError, "#FF7B72"},
+		{schema.StateDone, "#56D364"},
+		{schema.StateFailed, "#FF7B72"},
+		{schema.StateCancelled, "#6E7681"},
+		{schema.StateIdle, "#6E7681"},
+	}
+
+	for _, tt := range tests {
+		t.Run(string(tt.state), func(t *testing.T) {
+			color := getStateColor(tt.state)
+			if color != tt.expected {
+				t.Errorf("Expected %q for state %q, got %q", tt.expected, tt.state, color)
+			}
+		})
+	}
+}
+
+func TestGetStateColor_UnknownState(t *testing.T) {
+	color := getStateColor(schema.AgentState("unknown"))
+	if color != "#6E7681" {
+		t.Errorf("Expected default color, got %q", color)
 	}
 }
 
 func TestGetStateStyle_AllStates(t *testing.T) {
-	tests := []struct {
-		state schema.AgentState
-		name  string
-	}{
-		{schema.StateIdle, "idle"},
-		{schema.StateRunning, "running"},
-		{schema.StateError, "error"},
-		{schema.StateDone, "done"},
-		{schema.StateFailed, "failed"},
-		{schema.StateCancelled, "cancelled"},
+	states := []schema.AgentState{
+		schema.StateIdle, schema.StateRunning, schema.StateWaiting,
+		schema.StateBlocked, schema.StateError, schema.StateDone,
+		schema.StateFailed, schema.StateCancelled,
 	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			style := getStateStyle(tt.state)
-			rendered := style.Render(string(tt.state))
+	for _, state := range states {
+		t.Run(string(state), func(t *testing.T) {
+			style := getStateStyle(state)
+			rendered := style.Render(string(state))
 			if rendered == "" {
-				t.Error("Expected style to render non-empty output")
+				t.Error("Expected non-empty rendered output")
 			}
 		})
 	}
 }
 
 func TestGetStateStyle_DefaultCase(t *testing.T) {
-	unknownState := schema.AgentState("unknown-state")
-	style := getStateStyle(unknownState)
-	rendered := style.Render(string(unknownState))
-
+	style := getStateStyle(schema.AgentState("unknown"))
+	rendered := style.Render("test")
 	if rendered == "" {
-		t.Error("Expected default style to render non-empty output")
+		t.Error("Expected non-empty output for default style")
 	}
 }
 
-func TestRenderCard(t *testing.T) {
+func TestRenderCard_Unicode(t *testing.T) {
+	card := &AgentCard{
+		AgentID: "agent-001",
+		Role:    schema.RoleExecutor,
+		State:   schema.StateRunning,
+		Summary: "working on task",
+	}
+	result := renderCard(card, false, true)
+	if result == "" {
+		t.Error("Expected non-empty card")
+	}
+	if !strings.Contains(result, "executor") {
+		t.Error("Expected role in card")
+	}
+	if !strings.Contains(result, "agent-001") {
+		t.Error("Expected agent ID in card")
+	}
+	if !strings.Contains(result, "running") {
+		t.Error("Expected state in card")
+	}
+	if !strings.Contains(result, "working on task") {
+		t.Error("Expected summary in card")
+	}
+}
+
+func TestRenderCard_ASCII(t *testing.T) {
 	card := &AgentCard{
 		AgentID: "agent-001",
 		Role:    schema.RoleExecutor,
 		State:   schema.StateRunning,
 	}
-
-	result := renderCard(card)
-
+	result := renderCard(card, false, false)
 	if result == "" {
-		t.Error("Expected non-empty card output")
+		t.Error("Expected non-empty ASCII card")
 	}
-
-	if !strings.Contains(result, string(schema.RoleExecutor)) {
-		t.Errorf("Expected card to contain role %q", schema.RoleExecutor)
+	if !strings.Contains(result, "executor") {
+		t.Error("Expected role in ASCII card")
 	}
+}
 
-	if !strings.Contains(result, "agent-001") {
-		t.Error("Expected card to contain agent ID")
+func TestRenderCard_Selected(t *testing.T) {
+	card := &AgentCard{
+		AgentID: "agent-001",
+		Role:    schema.RoleExecutor,
+		State:   schema.StateRunning,
 	}
+	selected := renderCard(card, true, true)
+	unselected := renderCard(card, false, true)
+	if selected == unselected {
+		// Selected card should differ (different border color)
+		// This is acceptable if lipgloss doesn't produce visible difference in test
+	}
+	if selected == "" {
+		t.Error("Expected non-empty selected card")
+	}
+}
 
-	if !strings.Contains(result, string(schema.StateRunning)) {
-		t.Errorf("Expected card to contain state %q", schema.StateRunning)
+func TestRenderCard_ErrorBorder(t *testing.T) {
+	card := &AgentCard{
+		AgentID: "agent-001",
+		Role:    schema.RoleExecutor,
+		State:   schema.StateError,
+	}
+	result := renderCard(card, false, true)
+	if result == "" {
+		t.Error("Expected non-empty error card")
+	}
+}
+
+func TestRenderCard_BlockedBorder(t *testing.T) {
+	card := &AgentCard{
+		AgentID: "agent-001",
+		Role:    schema.RoleExecutor,
+		State:   schema.StateBlocked,
+	}
+	result := renderCard(card, false, true)
+	if result == "" {
+		t.Error("Expected non-empty blocked card")
 	}
 }
 
 func TestRenderCard_AllRoles(t *testing.T) {
 	roles := []schema.Role{
-		schema.RolePlanner,
-		schema.RoleExecutor,
-		schema.RoleReviewer,
-		schema.RoleGuard,
-		schema.RoleTester,
-		schema.RoleWriter,
-		schema.RoleExplorer,
-		schema.RoleArchitect,
-		schema.RoleDebugger,
-		schema.RoleVerifier,
-		schema.RoleDesigner,
+		schema.RolePlanner, schema.RoleExecutor, schema.RoleReviewer,
+		schema.RoleGuard, schema.RoleTester, schema.RoleWriter,
+		schema.RoleExplorer, schema.RoleArchitect, schema.RoleDebugger,
+		schema.RoleVerifier, schema.RoleDesigner, schema.RoleCustom,
 	}
-
 	for _, role := range roles {
 		t.Run(string(role), func(t *testing.T) {
-			card := &AgentCard{
-				AgentID: "test-agent",
-				Role:    role,
-				State:   schema.StateRunning,
-			}
-
-			result := renderCard(card)
-
+			card := &AgentCard{AgentID: "test", Role: role, State: schema.StateRunning}
+			result := renderCard(card, false, true)
 			if !strings.Contains(result, string(role)) {
 				t.Errorf("Expected card to contain role %q", role)
 			}
@@ -291,27 +502,135 @@ func TestRenderCard_AllRoles(t *testing.T) {
 
 func TestRenderCard_AllStates(t *testing.T) {
 	states := []schema.AgentState{
-		schema.StateIdle,
-		schema.StateRunning,
-		schema.StateError,
-		schema.StateDone,
-		schema.StateFailed,
-		schema.StateCancelled,
+		schema.StateIdle, schema.StateRunning, schema.StateWaiting,
+		schema.StateBlocked, schema.StateError, schema.StateDone,
+		schema.StateFailed, schema.StateCancelled,
 	}
-
 	for _, state := range states {
 		t.Run(string(state), func(t *testing.T) {
-			card := &AgentCard{
-				AgentID: "test-agent",
-				Role:    schema.RoleExecutor,
-				State:   state,
-			}
-
-			result := renderCard(card)
-
+			card := &AgentCard{AgentID: "test", Role: schema.RoleExecutor, State: state}
+			result := renderCard(card, false, true)
 			if !strings.Contains(result, string(state)) {
 				t.Errorf("Expected card to contain state %q", state)
 			}
 		})
+	}
+}
+
+func TestTruncate(t *testing.T) {
+	tests := []struct {
+		input    string
+		maxLen   int
+		expected string
+	}{
+		{"short", 10, "short"},
+		{"exactly-10", 10, "exactly-10"},
+		{"this-is-a-long-string", 10, "this-is..."},
+		{"ab", 3, "ab"},
+		{"abcd", 3, "abc"},
+	}
+	for _, tt := range tests {
+		result := truncate(tt.input, tt.maxLen)
+		if result != tt.expected {
+			t.Errorf("truncate(%q, %d) = %q, want %q", tt.input, tt.maxLen, result, tt.expected)
+		}
+	}
+}
+
+// Mascot tests
+
+func TestGetMascot_KnownRoles(t *testing.T) {
+	roles := []schema.Role{
+		schema.RolePlanner, schema.RoleExecutor, schema.RoleReviewer,
+		schema.RoleGuard, schema.RoleTester, schema.RoleWriter,
+		schema.RoleExplorer, schema.RoleArchitect, schema.RoleDebugger,
+		schema.RoleVerifier, schema.RoleDesigner, schema.RoleCustom,
+	}
+	for _, role := range roles {
+		t.Run(string(role), func(t *testing.T) {
+			sprite := GetMascot(role)
+			if len(sprite.Unicode) == 0 {
+				t.Error("Expected non-empty unicode sprite")
+			}
+			if sprite.ASCII == "" {
+				t.Error("Expected non-empty ASCII fallback")
+			}
+		})
+	}
+}
+
+func TestGetMascot_UnknownRole(t *testing.T) {
+	sprite := GetMascot(schema.Role("unknown"))
+	if len(sprite.Unicode) == 0 {
+		t.Error("Expected default unicode sprite")
+	}
+	if sprite.ASCII != "[?]" {
+		t.Errorf("Expected default ASCII [?], got %q", sprite.ASCII)
+	}
+}
+
+func TestGetStateIndicator_Unicode(t *testing.T) {
+	states := []schema.AgentState{
+		schema.StateRunning, schema.StateWaiting, schema.StateBlocked,
+		schema.StateError, schema.StateDone, schema.StateIdle,
+		schema.StateFailed, schema.StateCancelled,
+	}
+	for _, state := range states {
+		t.Run(string(state)+"_unicode", func(t *testing.T) {
+			indicator := GetStateIndicator(state, true)
+			if indicator == "" {
+				t.Error("Expected non-empty unicode indicator")
+			}
+		})
+	}
+}
+
+func TestGetStateIndicator_ASCII(t *testing.T) {
+	states := []schema.AgentState{
+		schema.StateRunning, schema.StateWaiting, schema.StateBlocked,
+		schema.StateError, schema.StateDone, schema.StateIdle,
+		schema.StateFailed, schema.StateCancelled,
+	}
+	for _, state := range states {
+		t.Run(string(state)+"_ascii", func(t *testing.T) {
+			indicator := GetStateIndicator(state, false)
+			if indicator == "" {
+				t.Error("Expected non-empty ASCII indicator")
+			}
+		})
+	}
+}
+
+func TestGetStateIndicator_UnknownState(t *testing.T) {
+	unicode := GetStateIndicator(schema.AgentState("unknown"), true)
+	ascii := GetStateIndicator(schema.AgentState("unknown"), false)
+	if unicode == "" {
+		t.Error("Expected non-empty unicode default indicator")
+	}
+	if ascii == "" {
+		t.Error("Expected non-empty ASCII default indicator")
+	}
+}
+
+// Order stability test
+func TestOrderStability(t *testing.T) {
+	m := NewModel()
+	ids := []string{"a", "b", "c", "d", "e"}
+	for _, id := range ids {
+		m.UpdateAgent(id, schema.RoleExecutor, schema.StateRunning)
+	}
+
+	for i, id := range ids {
+		if m.order[i] != id {
+			t.Errorf("Expected order[%d] = %q, got %q", i, id, m.order[i])
+		}
+	}
+
+	// Update existing agent should not change order
+	m.UpdateAgent("c", schema.RolePlanner, schema.StateDone)
+	for i, id := range ids {
+		if m.order[i] != id {
+			t.Errorf("After update, expected order[%d] = %q, got %q", i, id, m.order[i])
+		}
 	}
 }

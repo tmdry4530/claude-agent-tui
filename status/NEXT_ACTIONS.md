@@ -13,10 +13,18 @@
 - [x] RELEASE_NOTES.md (하이라이트/검증/리스크/업그레이드)
 - [x] status 문서 최종 갱신
 
+## 완료 (세션 6 — CLCO 마스코트 Agent Arena)
+- [x] Arena 패널 전면 리팩토링 (mascot, palette, selection, focus)
+- [x] CLCO 마스코트 유니코드 + ASCII fallback
+- [x] palette.md 기준 역할/상태 색상 적용
+- [x] 키바인딩: hjkl/화살표 + Enter Inspector 연동
+- [x] 테스트 32개 추가 (154 total)
+- [x] 데모 이벤트 확장 (8 에이전트, 다양한 상태)
+
 ## v0.2.0 (다음 릴리즈)
-1. Arena 포커스 하이라이트 보더 + 시각적 구분
-2. Timeline → Inspector Enter 키 연동
-3. Replay TUI 컨트롤 (Space 일시정지, +/- 속도)
+1. Timeline → Inspector Enter 키 연동
+2. Replay TUI 컨트롤 (Space 일시정지, +/- 속도)
+3. Arena 에이전트 필터링 (역할/상태별)
 
 ## P2: 안정화
 1. E2E/통합 테스트 추가
@@ -27,3 +35,4 @@
 1. 에이전트/이벤트 필터링
 2. 검색 기능 (/ 키)
 3. 키보드 도움말 (? 키)
+4. Arena 에이전트 정렬 (상태/역할/최근 활동 기준)

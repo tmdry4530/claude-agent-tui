@@ -1,8 +1,20 @@
 # PROGRESS
 
 ## 현재 상태
-- Phase: 2 (Execution) → v0.1.0-beta 릴리즈 준비 완료
-- 테스트: 122 tests (11 파일, 11 패키지) PASS, BUILD OK, RACE 0
+- Phase: 2 (Execution) → v0.1.0-beta + CLCO Arena 구현 완료
+- 테스트: 154 tests (12 파일, 11 패키지) PASS, BUILD OK, RACE 0
+
+## 세션 6 완료 (CLCO 마스코트 Agent Arena)
+- [x] Arena 패널 전면 리팩토링 (mascot sprites, palette colors, selection, focus)
+- [x] CLCO 마스코트 렌더링: 유니코드 블록 스프라이트 + ASCII fallback
+- [x] palette.md 기준 역할별 색상 12종 적용
+- [x] 상태별 시각 규칙: running(강조), waiting(저채도), blocked(경고), error(오류), done(완료)
+- [x] 에이전트 카드: agent_id, role, state, 이벤트 요약 표시
+- [x] 키바인딩: hjkl/화살표 Arena 내비게이션, Enter Inspector 연동
+- [x] 테스트: arena 32개 신규 (렌더/색상/fallback/통합)
+- [x] model.go: agentEvents 추적, buildEventSummary, arena focus 연동
+- [x] 데모 이벤트 확장: 8개 에이전트 (planner/executor/reviewer/guard/tester/writer/verifier + 다양한 상태)
+- [x] 전체 테스트: 154 PASS (122→154), BUILD OK, RACE 0
 
 ## 세션 5 완료 (릴리즈 문서화)
 - [x] CHANGELOG.md 작성 (Added/Changed/Fixed/Known Issues)
@@ -32,9 +44,10 @@
 ## 세션 1 완료 (설계)
 - [x] PRD, event-schema, ARCHITECTURE, COMPONENT_SPEC, palette, ROADMAP, RISK_REGISTER
 
-## v0.1.0-beta 릴리즈 요약
-- 총 122개 테스트 (11 파일, 11 패키지)
+## v0.1.0-beta + Arena 릴리즈 요약
+- 총 154개 테스트 (12 파일, 11 패키지)
 - 빌드 성공, Race detector 0 races
 - 3개 실행 모드: --watch, --replay, demo
-- 5개 TUI 패널: Arena, Timeline, Graph, Inspector, Footer
+- 5개 TUI 패널: Arena(CLCO mascot), Timeline, Graph, Inspector, Footer
+- CLCO 마스코트 스프라이트 12 역할 + 8 상태
 - 플러그인 패키징 + 릴리즈 문서 완료

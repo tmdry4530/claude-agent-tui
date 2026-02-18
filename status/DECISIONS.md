@@ -53,3 +53,31 @@
 - 결정: 추상 role 12종 + 매핑 테이블 방식 (A안 확장)
 - 근거: OMC 25+ agent를 7개로 압축하면 Arena 필터링 가치 감소, 12종이 적정 균형
 - 상태: Accepted
+
+## ADR-010: CLCO 마스코트 Arena 구현
+- 결정: 유니코드 블록 기반 미니 스프라이트 + ASCII fallback 이중 렌더링
+- 근거:
+  - 유니코드 지원 터미널에서 시각적 차별화 (역할별 고유 아이콘)
+  - ASCII fallback으로 256-color 터미널 호환성 보장
+  - palette.md 색상을 arena에 직접 적용하여 시각 일관성 확보
+- 대안: 이미지 기반 렌더링 (터미널 호환성 부족으로 기각)
+- 상태: Accepted
+
+## ADR-011: Arena 키바인딩 설계
+- 결정: hjkl/화살표로 에이전트 선택, Enter로 Inspector 연동
+- 근거:
+  - Vim 스타일 내비게이션이 TUI 사용자에게 익숙
+  - Enter 키로 선택한 에이전트의 최신 이벤트를 Inspector에 표시
+  - Tab은 패널 간 전환, hjkl은 패널 내 내비게이션으로 계층 분리
+- 상태: Accepted
+
+## ADR-012: 상태별 시각 규칙
+- 결정: palette.md 상태 색상 + CSS-like 시각 규칙 조합
+  - running: bold + #7EE787 (강조)
+  - waiting: faint + #7D8590 (저채도)
+  - blocked: bold + #E3B341 (경고, 테두리 강조)
+  - error: bold+blink + #FF7B72 (오류, 테두리 강조)
+  - done: normal + #56D364 (완료)
+  - failed: strikethrough + #FF7B72 (취소선)
+- 근거: palette.md 색상 시스템과 일관성 유지, 상태 구분 시인성 극대화
+- 상태: Accepted

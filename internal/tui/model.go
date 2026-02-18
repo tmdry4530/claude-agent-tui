@@ -2,6 +2,7 @@ package tui
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/chamdom/omc-agent-tui/internal/store"
@@ -33,6 +34,9 @@ type Model struct {
 	footer     footer.Model
 	agentTasks map[string]string // agentID -> active taskID
 
+	// agentEvents tracks the latest event per agent for inspector drill-down
+	agentEvents map[string]*schema.CanonicalEvent
+
 	width  int
 	height int
 
@@ -41,16 +45,19 @@ type Model struct {
 
 // NewModel creates a new TUI model with the given store.
 func NewModel(s *store.Store) Model {
-	return Model{
-		store:      s,
-		arena:      arena.NewModel(),
-		timeline:   timeline.NewModel(),
-		graph:      graph.NewModel(),
-		inspector:  inspector.NewModel(),
-		footer:     footer.NewModel(),
-		agentTasks: make(map[string]string),
-		focused:    0,
+	m := Model{
+		store:       s,
+		arena:       arena.NewModel(),
+		timeline:    timeline.NewModel(),
+		graph:       graph.NewModel(),
+		inspector:   inspector.NewModel(),
+		footer:      footer.NewModel(),
+		agentTasks:  make(map[string]string),
+		agentEvents: make(map[string]*schema.CanonicalEvent),
+		focused:     0,
 	}
+	m.arena.SetFocused(true)
+	return m
 }
 
 // Init initializes the model.
@@ -72,9 +79,21 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case "tab":
 			m.focused = (m.focused + 1) % panelCount
+			m.arena.SetFocused(m.focused == 0)
+		case "enter":
+			// When arena is focused, send selected agent's event to inspector
+			if m.focused == 0 {
+				if agent := m.arena.SelectedAgent(); agent != nil {
+					if evt, ok := m.agentEvents[agent.AgentID]; ok {
+						m.inspector.SetEvent(evt)
+					}
+				}
+			}
 		default:
-			// Route scroll keys to focused viewport panel
+			// Route keys to focused panel
 			switch m.focused {
+			case 0: // arena
+				m.arena.HandleKey(msg.String())
 			case 1: // timeline
 				m.timeline, cmd = m.timeline.Update(msg)
 				cmds = append(cmds, cmd)
@@ -177,8 +196,15 @@ func (m *Model) addEvent(event schema.CanonicalEvent) {
 	// Update timeline
 	m.timeline.AddEvent(event)
 
-	// Update arena
-	m.arena.UpdateAgent(event.AgentID, event.Role, event.State)
+	// Build event summary for arena card
+	summary := buildEventSummary(event)
+
+	// Track latest event per agent for inspector drill-down
+	eventCopy := event
+	m.agentEvents[event.AgentID] = &eventCopy
+
+	// Update arena with summary
+	m.arena.UpdateAgentWithSummary(event.AgentID, event.Role, event.State, summary)
 
 	// Update footer counters
 	m.footer.IncrementEvents()
@@ -232,6 +258,47 @@ func (m *Model) addEvent(event schema.CanonicalEvent) {
 // AddEvent is the public API for adding events externally.
 func (m *Model) AddEvent(event schema.CanonicalEvent) {
 	m.addEvent(event)
+}
+
+// buildEventSummary creates a short summary string from an event.
+func buildEventSummary(event schema.CanonicalEvent) string {
+	switch event.Type {
+	case schema.TypeTaskSpawn:
+		if event.TaskID != "" {
+			return fmt.Sprintf("spawn: %s", truncateStr(event.TaskID, 16))
+		}
+		return "task spawned"
+	case schema.TypeTaskDone:
+		return "task done"
+	case schema.TypeToolCall:
+		return "tool call"
+	case schema.TypeToolResult:
+		return "tool result"
+	case schema.TypeMessage:
+		return "message"
+	case schema.TypeError:
+		return "error"
+	case schema.TypeReplan:
+		return "replanning"
+	case schema.TypeVerify:
+		return "verifying"
+	case schema.TypeFix:
+		return "fixing"
+	case schema.TypeRecover:
+		return "recovering"
+	case schema.TypeStateChange:
+		return fmt.Sprintf("-> %s", event.State)
+	default:
+		return string(event.Type)
+	}
+}
+
+// truncateStr shortens a string.
+func truncateStr(s string, maxLen int) string {
+	if len(s) <= maxLen {
+		return s
+	}
+	return s[:maxLen-3] + "..."
 }
 
 // extractTaskTitle gets the title from a TaskSpawn payload.
