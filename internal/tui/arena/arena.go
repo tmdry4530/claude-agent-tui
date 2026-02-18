@@ -262,10 +262,12 @@ func renderCard(card *AgentCard, selected bool, useUnicode bool) string {
 	// Build card content
 	var lines []string
 
-	// 3-line CLCO sprite
+	// 3-line CLCO sprite, centered in card content area (card width 26 - 2 border - 2 padding = 22)
+	contentWidth := 22
 	sprite := GetSprite(useUnicode)
 	for _, line := range sprite {
-		lines = append(lines, spriteStyle.Render(line))
+		centered := PadCenter(line, contentWidth)
+		lines = append(lines, spriteStyle.Render(centered))
 	}
 
 	// Role + indicator
