@@ -29,7 +29,12 @@
 - [x] CanonicalEvent 스키마 100% 준수
 - [x] bridge 테스트 14개 추가
 
-## v0.2.0 (다음 릴리즈)
+## 완료 (세션 8 — Plugin UX)
+- [x] 슬래시 명령 5종 (.claude/commands/)
+- [x] plugin.json v0.2.0
+- [x] README Quick Start
+
+## v0.3.0 (다음 릴리즈)
 1. Timeline → Inspector Enter 키 연동
 2. Replay TUI 컨트롤 (Space 일시정지, +/- 속도)
 3. Arena 에이전트 필터링 (역할/상태별)

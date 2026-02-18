@@ -1,8 +1,15 @@
 # PROGRESS
 
 ## 현재 상태
-- Phase: 2 (Execution) → v0.1.0-beta + CLCO Arena + OMC Bridge 구현 완료
-- 테스트: 170+ tests (13 파일, 12 패키지) PASS, BUILD OK, RACE 0
+- Phase: 2 (Execution) → v0.2.0 Plugin UX 완성
+- 테스트: 182 tests (12 파일, 12 패키지) PASS, BUILD OK, RACE 0
+
+## 세션 8 완료 (Plugin UX)
+- [x] 슬래시 명령 5종: install-bridge, monitor, replay, doctor, stop
+- [x] .claude/commands/ 디렉터리 구조
+- [x] plugin.json v0.2.0 업데이트 (commands 필드 추가)
+- [x] README Quick Start 섹션 (1분 설치 가이드)
+- [x] 전체 테스트 182 PASS, BUILD OK, RACE 0
 
 ## 세션 7 완료 (OMC Bridge 실시간 동기화)
 - [x] internal/bridge 패키지: tracking.go (변환기) + emitter.go (이벤트 발행)

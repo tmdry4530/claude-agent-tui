@@ -14,10 +14,35 @@ Built with Go and [Bubbletea](https://github.com/charmbracelet/bubbletea).
 - PII redaction (11 key + 8 regex patterns)
 - Ring buffer store (10K events)
 
+## Quick Start (1 minute)
+
+```bash
+# 1. Build
+go build -o bin/omc-tui ./cmd/omc-tui
+
+# 2. Start monitor (in a separate terminal)
+./bin/omc-tui --watch .omc/events/
+
+# 3. Or replay a previous session
+./bin/omc-tui --convert .omc/state/subagent-tracking.json -o .omc/events/session.jsonl
+./bin/omc-tui --replay .omc/events/session.jsonl
+```
+
+### Claude Code Slash Commands
+
+| Command | Description |
+|---------|-------------|
+| `/project:install-bridge` | Build binary + set up hook bridge |
+| `/project:monitor` | Start real-time agent monitoring |
+| `/project:replay` | Replay latest agent session |
+| `/project:doctor` | Run installation diagnostics |
+| `/project:stop` | Stop running monitor |
+
 ## Requirements
 
 - Go 1.23 or higher
 - Terminal with Unicode and 256-color support
+- `jq` (optional, for hook script)
 
 ## Installation
 
@@ -116,19 +141,22 @@ See `pkg/schema/` for full type definitions.
 ## Project Structure
 
 ```
-cmd/omc-tui/          CLI entrypoint
+cmd/omc-tui/          CLI entrypoint (watch, replay, convert)
 internal/
+  bridge/             OMC bridge (tracking converter + event emitter)
   collector/          File-based event collector (fsnotify)
   normalizer/         Event normalization + PII redaction
   store/              Ring buffer event store
   replay/             JSONL replay engine
   tui/                Bubbletea TUI model
-    arena/            Agent card panel
+    arena/            Agent card panel (CLCO mascot)
     timeline/         Event stream panel
     graph/            Task dependency tree
     inspector/        Event detail viewer
     footer/           Metrics footer bar
 pkg/schema/           Canonical event types and enums
+scripts/              OMC hook bridge script
+.claude/commands/     Slash commands (install-bridge, monitor, replay, doctor, stop)
 ```
 
 ## Testing
@@ -139,7 +167,7 @@ make test
 go test ./... -race
 ```
 
-122 tests across 11 packages. All pass with race detector enabled.
+182 tests across 12 packages. All pass with race detector enabled.
 
 ## License
 

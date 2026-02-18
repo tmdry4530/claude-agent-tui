@@ -1,6 +1,6 @@
 {
   "name": "omc-agent-tui",
-  "version": "0.1.0-beta",
+  "version": "0.2.0",
   "description": "Real-time TUI dashboard for monitoring AI agent orchestration events",
   "author": "chamdom",
   "license": "MIT",
@@ -21,11 +21,28 @@
         "description": "JSONL file to replay",
         "type": "string",
         "required": false
+      },
+      "convert": {
+        "description": "Convert subagent-tracking.json to JSONL",
+        "type": "string",
+        "required": false
+      },
+      "o": {
+        "description": "Output path for --convert",
+        "type": "string",
+        "required": false
       }
     }
+  },
+  "commands": {
+    "install-bridge": "Set up hook bridge for real-time agent sync",
+    "monitor": "Start real-time agent monitoring",
+    "replay": "Replay a previous agent session",
+    "doctor": "Run installation diagnostics",
+    "stop": "Stop the running monitor"
   },
   "requirements": {
     "go": ">=1.23"
   },
-  "keywords": ["tui", "agent", "monitoring", "dashboard", "bubbletea"]
+  "keywords": ["tui", "agent", "monitoring", "dashboard", "bubbletea", "claude-code"]
 }
