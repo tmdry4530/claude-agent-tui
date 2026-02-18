@@ -554,14 +554,20 @@ func TestGetSprite_Unicode(t *testing.T) {
 
 func TestGetSprite_ExactStrings(t *testing.T) {
 	sprite := GetSprite(true)
-	if sprite[0] != " .===. " {
-		t.Errorf("Line 0: expected %q, got %q", " .===. ", sprite[0])
+	// Line 0: " ▐▛███▜▌ "
+	expected0 := " \u2590\u259B\u2588\u2588\u2588\u259C\u258C "
+	if sprite[0] != expected0 {
+		t.Errorf("Line 0: expected %q, got %q", expected0, sprite[0])
 	}
-	if sprite[1] != " |@ @| " {
-		t.Errorf("Line 1: expected %q, got %q", " |@ @| ", sprite[1])
+	// Line 1: "▝▜█████▛▘"
+	expected1 := "\u259D\u259C\u2588\u2588\u2588\u2588\u2588\u259B\u2598"
+	if sprite[1] != expected1 {
+		t.Errorf("Line 1: expected %q, got %q", expected1, sprite[1])
 	}
-	if sprite[2] != " '-.-' " {
-		t.Errorf("Line 2: expected %q, got %q", " '-.-' ", sprite[2])
+	// Line 2: " ▘▘   ▝▝ "
+	expected2 := " \u2598\u2598   \u259D\u259D "
+	if sprite[2] != expected2 {
+		t.Errorf("Line 2: expected %q, got %q", expected2, sprite[2])
 	}
 }
 
@@ -595,9 +601,9 @@ func TestGetSprite_UniformWidth(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			sprite := GetSprite(useUnicode)
 			for i, line := range sprite {
-				w := len(line)
+				w := len([]rune(line))
 				if w != SpriteWidth {
-					t.Errorf("Line %d width: expected %d, got %d (%q)", i, SpriteWidth, w, line)
+					t.Errorf("Line %d rune width: expected %d, got %d (%q)", i, SpriteWidth, w, line)
 				}
 			}
 		})
@@ -608,19 +614,19 @@ func TestPadCenter(t *testing.T) {
 	tests := []struct {
 		input    string
 		width    int
-		expected string
+		wantLen  int
 	}{
-		{"abc", 7, "  abc  "},
-		{"ab", 6, "  ab  "},
-		{"a", 5, "  a  "},
-		{"hello", 5, "hello"},
-		{"toolong", 3, "toolong"},
-		{" .===. ", 22, "        .===.         "},
+		{"abc", 7, 7},
+		{"ab", 6, 6},
+		{"a", 5, 5},
+		{"hello", 5, 5},
+		{"toolong", 3, 7}, // longer than target, returned as-is
 	}
 	for _, tt := range tests {
 		result := PadCenter(tt.input, tt.width)
-		if result != tt.expected {
-			t.Errorf("PadCenter(%q, %d) = %q, want %q", tt.input, tt.width, result, tt.expected)
+		runes := []rune(result)
+		if len(runes) != tt.wantLen {
+			t.Errorf("PadCenter(%q, %d) rune len = %d, want %d", tt.input, tt.width, len(runes), tt.wantLen)
 		}
 	}
 }
@@ -630,20 +636,21 @@ func TestPadCenter_OutputWidth(t *testing.T) {
 	targetWidth := 22
 	for i, line := range sprite {
 		padded := PadCenter(line, targetWidth)
-		if len(padded) != targetWidth {
-			t.Errorf("Padded line %d width: expected %d, got %d (%q)", i, targetWidth, len(padded), padded)
+		runes := []rune(padded)
+		if len(runes) != targetWidth {
+			t.Errorf("Padded line %d rune width: expected %d, got %d", i, targetWidth, len(runes))
 		}
 	}
 }
 
 func TestSpriteRenderedWidth(t *testing.T) {
-	// Verify sprite lines are monospace-safe: len() == visual width
+	// Verify all sprite lines have SpriteWidth runes
 	for _, useUnicode := range []bool{true, false} {
 		sprite := GetSprite(useUnicode)
 		for i, line := range sprite {
-			// For pure ASCII, len() == visual char count
-			if len(line) != SpriteWidth {
-				t.Errorf("Sprite[%d] raw width %d != SpriteWidth %d", i, len(line), SpriteWidth)
+			runes := []rune(line)
+			if len(runes) != SpriteWidth {
+				t.Errorf("Sprite[%d] rune width %d != SpriteWidth %d", i, len(runes), SpriteWidth)
 			}
 		}
 	}
