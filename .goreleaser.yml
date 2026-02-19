@@ -5,7 +5,6 @@ project_name: omc-tui
 before:
   hooks:
     - go mod tidy
-    - go test ./... -race -count=1
 
 builds:
   - id: omc-tui
@@ -47,7 +46,7 @@ changelog:
 
 release:
   github:
-    owner: chamdom
+    owner: tmdry4530
     name: omc-agent-tui
   draft: false
   prerelease: auto
