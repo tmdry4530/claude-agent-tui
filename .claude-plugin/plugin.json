@@ -7,8 +7,5 @@
   },
   "license": "MIT",
   "repository": "https://github.com/tmdry4530/omc-agent-tui",
-  "keywords": ["tui", "agent", "monitoring", "dashboard", "bubbletea", "claude-code"],
-  "requirements": {
-    "go": ">=1.24"
-  }
+  "keywords": ["tui", "agent", "monitoring", "dashboard", "bubbletea", "claude-code"]
 }
