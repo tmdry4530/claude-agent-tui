@@ -1,0 +1,6 @@
+{"ts":"2026-02-18T18:20:44.000Z","run_id":"omc-explorer-1","provider":"claude","agent_id":"explorer-1","role":"explorer","state":"running","type":"task_spawn"}
+{"ts":"2026-02-18T18:20:44.000Z","run_id":"omc-reviewer-1","provider":"claude","agent_id":"reviewer-1","role":"reviewer","state":"running","type":"task_spawn"}
+{"ts":"2026-02-18T18:20:44.000Z","run_id":"omc-tester-1","provider":"claude","agent_id":"tester-1","role":"tester","state":"running","type":"task_spawn"}
+{"ts":"2026-02-18T18:23:42Z","run_id":"omc-explorer-1","provider":"claude","agent_id":"explorer-1","role":"explorer","state":"done","type":"task_done","payload":{"duration_ms":9454}}
+{"ts":"2026-02-18T18:23:42Z","run_id":"omc-reviewer-1","provider":"claude","agent_id":"reviewer-1","role":"reviewer","state":"waiting","type":"task_update"}
+{"ts":"2026-02-18T18:23:42Z","run_id":"omc-tester-1","provider":"claude","agent_id":"tester-1","role":"tester","state":"error","type":"error","payload":{"error":"path traversal in SESSION_ID"}}

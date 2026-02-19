@@ -8,9 +8,9 @@ Built with Go and [Bubbletea](https://github.com/charmbracelet/bubbletea).
 
 ```
 ╭────────────────────────╮  ╭────────────────────────╮  ╭────────────────────────╮
-│        ▐▛███▜▌         │  │        ▐▛███▜▌         │  │        ▐▛███▜▌         │
-│       ▝▜█████▛▘        │  │       ▝▜█████▛▘        │  │       ▝▜█████▛▘        │
-│         ▘▘ ▝▝          │  │         ▘▘ ▝▝          │  │         ▘▘ ▝▝          │
+│         ▐▛███▜▌       │  │         ▐▛███▜▌      │  │         ▐▛███▜▌       │
+│       ▝▜█████▛▘      │  │       ▝▜█████▛▘    │  │       ▝▜█████▛▘      │
+│         ▘▘ ▝▝        │  │         ▘▘ ▝▝      │  │         ▘▘ ▝▝        │
 │  executor ●            │  │  planner ●             │  │  reviewer ○            │
 │  agent-exec-1          │  │  agent-plan-1          │  │  agent-rev-1           │
 │  running               │  │  running               │  │  waiting               │

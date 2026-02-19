@@ -1,8 +1,0 @@
-{
-  "active": true,
-  "started_at": "2026-02-17T19:47:14.412Z",
-  "original_prompt": "이번 작업은 Ralph 모드 우선으로 진행하고, 병렬 구간만 Ultrawork 사용. 중단 없이 verify-fix 루프로 완료해. omc-agent-tui 폴더의 PRD.md, COMPONENT_SPEC.md, ARCHITECTURE.md, TASKS.md, prompts/MASTER_PROMPT.md를 읽고 MASTER_PROMPT 규칙대로 실행해. 먼저 Preflight(Gemini/Codex MCP 호출 테스트)부터 수행하고, 실패하면 즉시 작업 취소 후 status/FAILURES.md에 기록해.",
-  "session_id": "b6769f0f-3cd0-45ad-aa4d-fcee2b357195",
-  "reinforcement_count": 0,
-  "last_checked_at": "2026-02-17T19:47:14.412Z"
-}
