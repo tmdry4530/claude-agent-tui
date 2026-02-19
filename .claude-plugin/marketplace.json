@@ -1,11 +1,17 @@
 {
   "name": "claude-agent-tui",
-  "description": "Real-time TUI dashboard for monitoring AI agent orchestration events",
-  "owner": "tmdry4530",
+  "owner": {
+    "name": "chamdom"
+  },
+  "metadata": {
+    "description": "Real-time TUI dashboard for monitoring AI agent orchestration events"
+  },
   "plugins": [
     {
       "name": "claude-agent-tui",
-      "source": "."
+      "source": "./",
+      "description": "Real-time TUI dashboard for monitoring AI agent orchestration events",
+      "version": "0.2.0"
     }
   ]
 }
