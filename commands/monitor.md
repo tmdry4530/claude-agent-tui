@@ -1,4 +1,4 @@
-Start real-time omc-agent-tui monitoring of Claude Code agent activity.
+Start real-time claude-agent-tui monitoring of Claude Code agent activity.
 
 Steps to perform:
 1. Check if `bin/omc-tui` exists. If not, build it: `go build -o bin/omc-tui ./cmd/omc-tui/`
@@ -19,7 +19,7 @@ On success, print:
     tmux split-window -h './bin/omc-tui --watch .omc/events/'
 
   Agent events will appear in real-time as you work.
-  Use /project:stop to terminate.
+  Use /claude-agent-tui:stop to terminate.
 ```
 
-If binary build fails, suggest running /project:doctor.
+If binary build fails, suggest running /claude-agent-tui:doctor.

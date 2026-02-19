@@ -1,4 +1,4 @@
-Stop the running omc-agent-tui monitor process.
+Stop the running claude-agent-tui monitor process.
 
 Steps to perform:
 1. Find running omc-tui processes: `pgrep -f 'omc-tui.*--watch'`

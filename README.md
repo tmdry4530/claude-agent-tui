@@ -1,4 +1,4 @@
-# omc-agent-tui
+# claude-agent-tui
 
 Real-time TUI dashboard for monitoring AI agent orchestration events.
 
@@ -43,15 +43,15 @@ go build -o bin/omc-tui ./cmd/omc-tui
 ./bin/omc-tui --replay .omc/events/session.jsonl
 ```
 
-### Claude Code Slash Commands
+### Claude Code Plugin Commands
 
 | Command | Description |
 |---------|-------------|
-| `/project:install-bridge` | Build binary + set up hook bridge |
-| `/project:monitor` | Start real-time agent monitoring |
-| `/project:replay` | Replay latest agent session |
-| `/project:doctor` | Run installation diagnostics |
-| `/project:stop` | Stop running monitor |
+| `/claude-agent-tui:install-bridge` | Build binary + set up hook bridge |
+| `/claude-agent-tui:monitor` | Start real-time agent monitoring |
+| `/claude-agent-tui:replay` | Replay latest agent session |
+| `/claude-agent-tui:doctor` | Run installation diagnostics |
+| `/claude-agent-tui:stop` | Stop running monitor |
 
 ## Requirements
 
@@ -61,25 +61,18 @@ go build -o bin/omc-tui ./cmd/omc-tui
 
 ## Installation
 
+### As Claude Code plugin
+
+```bash
+claude --plugin-dir /path/to/claude-agent-tui
+```
+
 ### Build from source
 
 ```bash
-git clone https://github.com/chamdom/omc-agent-tui.git
+git clone https://github.com/tmdry4530/omc-agent-tui.git
 cd omc-agent-tui
-make build
-```
-
-### Manual build
-
-```bash
 go build -o bin/omc-tui ./cmd/omc-tui
-```
-
-### System-wide install
-
-```bash
-make install
-# Installs to ~/.local/bin/omc-tui
 ```
 
 ## Usage
@@ -117,23 +110,6 @@ Replays events from a JSONL file with original timing (capped at 2s between even
 | `k` / `Up` | Scroll up |
 | `q` / `Ctrl+C` | Quit |
 
-## Claude Code Plugin
-
-### Install as plugin
-
-```bash
-claude plugin install /path/to/omc-agent-tui
-```
-
-The plugin metadata is defined in `.claude-plugin/plugin.json`.
-
-### Plugin args
-
-| Arg | Description |
-|-----|-------------|
-| `--watch <dir>` | Directory to watch for JSONL event files |
-| `--replay <file>` | JSONL file to replay |
-
 ## Event Format
 
 Events are JSONL files with the following canonical structure:
@@ -170,15 +146,14 @@ internal/
     inspector/        Event detail viewer
     footer/           Metrics footer bar
 pkg/schema/           Canonical event types and enums
-scripts/              OMC hook bridge script
-.claude/commands/     Slash commands (install-bridge, monitor, replay, doctor, stop)
+scripts/              Hook bridge script
+commands/             Plugin slash commands
+hooks/                Plugin hook configuration
 ```
 
 ## Testing
 
 ```bash
-make test
-# or
 go test ./... -race
 ```
 

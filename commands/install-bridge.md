@@ -1,4 +1,4 @@
-Install the omc-agent-tui bridge for real-time Claude Code agent monitoring.
+Install the claude-agent-tui bridge for real-time Claude Code agent monitoring.
 
 Steps to perform:
 1. Build the binary: `go build -o bin/omc-tui ./cmd/omc-tui/`
@@ -18,7 +18,7 @@ Next: Add the hook to your Claude Code settings:
     "PostToolUse": [{ "command": "<absolute-path>/scripts/omc-bridge-hook.sh" }]
   }
 
-Then run /project:monitor to start real-time monitoring.
+Then run /claude-agent-tui:monitor to start real-time monitoring.
 ```
 
-On build failure, print the error and suggest checking Go version with `go version` (requires Go 1.23+).
+On build failure, print the error and suggest checking Go version with `go version` (requires Go 1.24+).

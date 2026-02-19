@@ -25,5 +25,5 @@ If no replay source found, print:
 ```
 [omc-tui] No replay data found.
   Run some agent tasks first, or provide a JSONL file:
-    /project:replay path/to/events.jsonl
+    /claude-agent-tui:replay path/to/events.jsonl
 ```

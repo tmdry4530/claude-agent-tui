@@ -1,48 +1,14 @@
 {
-  "name": "omc-agent-tui",
-  "version": "0.2.0",
+  "name": "claude-agent-tui",
   "description": "Real-time TUI dashboard for monitoring AI agent orchestration events",
-  "author": "chamdom",
+  "version": "0.2.0",
+  "author": {
+    "name": "chamdom"
+  },
   "license": "MIT",
-  "main": "cmd/omc-tui/main.go",
-  "build": {
-    "command": "go build -o bin/omc-tui ./cmd/omc-tui",
-    "output": "bin/omc-tui"
-  },
-  "run": {
-    "command": "bin/omc-tui",
-    "args": {
-      "watch": {
-        "description": "Directory to watch for JSONL event files",
-        "type": "string",
-        "required": false
-      },
-      "replay": {
-        "description": "JSONL file to replay",
-        "type": "string",
-        "required": false
-      },
-      "convert": {
-        "description": "Convert subagent-tracking.json to JSONL",
-        "type": "string",
-        "required": false
-      },
-      "o": {
-        "description": "Output path for --convert",
-        "type": "string",
-        "required": false
-      }
-    }
-  },
-  "commands": {
-    "install-bridge": "Set up hook bridge for real-time agent sync",
-    "monitor": "Start real-time agent monitoring",
-    "replay": "Replay a previous agent session",
-    "doctor": "Run installation diagnostics",
-    "stop": "Stop the running monitor"
-  },
+  "repository": "https://github.com/tmdry4530/omc-agent-tui",
+  "keywords": ["tui", "agent", "monitoring", "dashboard", "bubbletea", "claude-code"],
   "requirements": {
-    "go": ">=1.23"
-  },
-  "keywords": ["tui", "agent", "monitoring", "dashboard", "bubbletea", "claude-code"]
+    "go": ">=1.24"
+  }
 }
