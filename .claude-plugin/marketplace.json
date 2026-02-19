@@ -1,0 +1,11 @@
+{
+  "name": "claude-agent-tui",
+  "description": "Real-time TUI dashboard for monitoring AI agent orchestration events",
+  "owner": "tmdry4530",
+  "plugins": [
+    {
+      "name": "claude-agent-tui",
+      "source": "."
+    }
+  ]
+}
