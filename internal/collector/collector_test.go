@@ -60,7 +60,7 @@ func TestFileCollector_NewLines(t *testing.T) {
 		_, _ = f.Write(jsonBytes)
 		_, _ = f.Write([]byte("\n"))
 	}
-	f.Sync()
+	_ = f.Sync()
 	f.Close()
 
 	// Drain expected events
@@ -95,11 +95,11 @@ func TestFileCollector_InvalidJSON(t *testing.T) {
 		t.Fatalf("failed to create test file: %v", err)
 	}
 
-	f.Write([]byte("invalid json line\n"))
-	f.Write([]byte(`{"valid": "json"}` + "\n"))
-	f.Write([]byte("another invalid\n"))
-	f.Write([]byte(`{"also": "valid"}` + "\n"))
-	f.Sync()
+	_, _ = f.Write([]byte("invalid json line\n"))
+	_, _ = f.Write([]byte(`{"valid": "json"}` + "\n"))
+	_, _ = f.Write([]byte("another invalid\n"))
+	_, _ = f.Write([]byte(`{"also": "valid"}` + "\n"))
+	_ = f.Sync()
 	f.Close()
 
 	// Only valid JSON lines should be received (2 out of 4)
@@ -173,8 +173,8 @@ func TestFileCollector_AppendToFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to create test file: %v", err)
 	}
-	f.Write([]byte(`{"line": 1}` + "\n"))
-	f.Sync()
+	_, _ = f.Write([]byte(`{"line": 1}` + "\n"))
+	_ = f.Sync()
 	f.Close()
 
 	// Receive first event
@@ -188,8 +188,8 @@ func TestFileCollector_AppendToFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to open test file for append: %v", err)
 	}
-	f.Write([]byte(`{"line": 2}` + "\n"))
-	f.Sync()
+	_, _ = f.Write([]byte(`{"line": 2}` + "\n"))
+	_ = f.Sync()
 	f.Close()
 
 	// Receive second event

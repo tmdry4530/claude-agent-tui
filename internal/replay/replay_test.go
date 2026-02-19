@@ -17,7 +17,7 @@ func createTestJSONL(t *testing.T, dir string, events []schema.CanonicalEvent) s
 	if err != nil {
 		t.Fatalf("create file: %v", err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	for _, evt := range events {
 		data, err := json.Marshal(evt)

@@ -148,10 +148,7 @@ func (fc *FileCollector) isBackedOff() bool {
 	fc.mu.Lock()
 	defer fc.mu.Unlock()
 
-	if time.Now().Before(fc.backoffUntil) {
-		return true
-	}
-	return false
+	return time.Now().Before(fc.backoffUntil)
 }
 
 // recordFailure는 실패를 기록하고 필요시 backoff를 설정합니다.
